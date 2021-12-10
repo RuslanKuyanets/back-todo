@@ -43,6 +43,23 @@ class TodoController {
             res.status(400).json(e)
         }
     }  
+    async toggleCompletedAll(req, res) {
+        try {
+            const todo = req.body
+            const updatedTodo = await Todo.updateMany({completed: req.body.completed})
+            res.json(updatedTodo)
+        } catch (e) {
+            res.status(400).json(e)
+        }
+    }
+    async deleteCompletedTasks(req, res) {
+        try {
+            const todo = await Todo.deleteMany({completed: 'true'})
+            res.json(todo)
+        } catch (e) {
+            res.status(400).json(e)
+        }
+    }  
 }
 
 module.exports = new TodoController
