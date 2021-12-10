@@ -45,17 +45,16 @@ class TodoController {
     }  
     async toggleCompletedAll(req, res) {
         try {
-            const todo = req.body
-            const updatedTodo = await Todo.updateMany({completed: req.body.completed})
-            res.json(updatedTodo)
+            const updatedTodos = await Todo.updateMany({completed: req.body.completed})
+            res.json(updatedTodos)
         } catch (e) {
             res.status(400).json(e)
         }
     }
     async deleteCompletedTasks(req, res) {
         try {
-            const todo = await Todo.deleteMany({completed: 'true'})
-            res.json(todo)
+            const todos = await Todo.deleteMany({completed: 'true'})
+            res.json(todos)
         } catch (e) {
             res.status(400).json(e)
         }
