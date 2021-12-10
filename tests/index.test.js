@@ -6,12 +6,15 @@ const mongoose = require('./databaseConfig.js');
 jest.setTimeout(10000);
 
 describe('API', function () {
-    beforeAll(async() => {      
+    beforeAll(async() => {             
         mongoose.connect();
         await Todo.deleteMany()
     });
+    beforeEach(async() => {             
+        await Todo.deleteMany()
+    });
     afterAll((done) => {
-        mongoose.disconnect(done);
+        mongoose.disconnect(done);     
     });
     test('It should return the list of todos', async () => {
         const response = await request(app).get('/api/todos');
@@ -32,13 +35,27 @@ describe('API', function () {
     });
     test('It should return the title of updated todo', async () => {
         const todo = await Todo.create({ title: 'todo' });
-
         const updatedTodo = {title: 'test'}
-
         const response = await request(app).put(`/api/todos/${todo._id}`).send(updatedTodo);
         
         expect(response.statusCode).toBe(200);
-        expect(response.body.title).toBe('test');
+        expect(response.body.title).toBe('test');   
+    });
+    test('It should return the count of deleted todos', async () => {      
+        const todo = await Todo.create({ title: 'first', completed: true });
+        const todo1 = await Todo.create({ title: 'second', completed: true });
+        const response = await request(app).delete(`/api/todos`);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.deletedCount).toBe(2);
+    });
+    test('It should return count of updated todo', async () => {
+        const todo = await Todo.create({ title: 'todo' });
+        const completed = {completed: true}
+
+        const response = await request(app).put(`/api/todos`).send(completed);
         
+        expect(response.statusCode).toBe(200);
+        expect(response.body.modifiedCount).toBe(1);   
     });
 });
