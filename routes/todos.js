@@ -5,7 +5,7 @@ const router = Router()
 
 router.post('/todos', TodoController.createTask)
 router.get('/todos', TodoController.getTasks)
-router.put('/todos', TodoController.updateTask)
+router.put('/todos/:id', TodoController.updateTask)
 router.delete('/todos/:id', TodoController.deleteTask)
 
 module.exports = router

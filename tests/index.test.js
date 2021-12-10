@@ -6,8 +6,9 @@ const mongoose = require('./databaseConfig.js');
 jest.setTimeout(10000);
 
 describe('API', function () {
-    beforeAll(() => {
+    beforeAll(async() => {      
         mongoose.connect();
+        await Todo.deleteMany()
     });
     afterAll((done) => {
         mongoose.disconnect(done);
@@ -15,7 +16,7 @@ describe('API', function () {
     test('It should return the list of todos', async () => {
         const response = await request(app).get('/api/todos');
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(2);
+        expect(response.body.length).toBe(0);
     });
     test('It should return the title of new todo', async () => {
         const newTodo = {'title': 'newTodo'}
@@ -30,20 +31,14 @@ describe('API', function () {
         expect(response.body.title).toBe('todo');
     });
     test('It should return the title of updated todo', async () => {
-        const todo = {
-            "_id": "61b1e9cccca8833a75200a7b",
-            "title": "workandtravel",
-            "completed": true,
-            "__v": 0
-        }
-        const response = await request(app).put('/api/todos').send(todo);
+        const todo = await Todo.create({ title: 'todo' });
+
+        const updatedTodo = {title: 'test'}
+
+        const response = await request(app).put(`/api/todos/${todo._id}`).send(updatedTodo);
         
         expect(response.statusCode).toBe(200);
-        expect(response.body.title).toBe('workandtravel');
+        expect(response.body.title).toBe('test');
         
     });
 });
-
-it('Testing to see if Jest works', () => {
-    expect(1).toBe(1)
-})
