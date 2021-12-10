@@ -13,19 +13,20 @@ class TodoController {
     async getTasks(req, res) {
         try {
             const todos = await Todo.find()
-            return res.json(todos)
+            res.json(todos)
         } catch (e) {
             res.status(400).json(e)
         }
     }
     async updateTask(req, res) {
         try {
+            const {id} = req.params
             const todo = req.body
-            if (!todo._id) {
+            if (!id) {
                 res.status(400).json({message: 'Not ID'})
             }
-            const updatedTodo = await Todo.findByIdAndUpdate(todo._id, todo)
-            return res.json(updatedTodo)
+            const updatedTodo = await Todo.findByIdAndUpdate(id, todo, {new: true})
+            res.json(updatedTodo)
         } catch (e) {
             res.status(400).json(e)
         }
@@ -37,7 +38,7 @@ class TodoController {
                 res.status(400).json({message: 'Not ID'})
             }
             const todo = await Todo.findByIdAndDelete(id)
-            return res.json(todo)
+            res.json(todo)
         } catch (e) {
             res.status(400).json(e)
         }
